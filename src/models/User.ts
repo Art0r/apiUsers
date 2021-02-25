@@ -2,7 +2,7 @@ import connection from '../../database/connection';
 
 const Model = new connection.Schema({
     name: String,
-    agr: Number
+    age: Number
 });
 
 export default Model;
