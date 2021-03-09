@@ -65,13 +65,43 @@ class UserController {
     async getUserById(req : Request, res : Response){
         const id = req.params.id;
 
-        res.send(await UserModel.find({_id: id}));
+        if (id != null){
+            try {
+                const user : any = await UserModel.findById(id);
+
+                if (user != null) {
+                    res.status(200);
+                    res.send(await user[0]);
+                }            
+            } catch (err) {
+                res.status(400);
+                res.json({err: err.message});
+            }
+        } else {
+            res.status(400);
+            res.json({err: "O Id não foi inserido!"});
+        }
     }
 
     async getUserByEmail(req : Request, res : Response){
         const email = req.params.email;
 
-        res.send(await UserModel.find({email: email}));
+        if (email != null){
+            try {
+                const user : any = await UserModel.find({email: email});
+
+                if (user != null) {
+                    res.status(200);
+                    res.send(await user[0]);
+                }            
+            } catch (err) {
+                res.status(400);
+                res.json({err: err.message});
+            }
+        } else {
+            res.status(400);
+            res.json({err: "O Email não foi inserido!"});
+        }
     }
 
     async modifyUser(req : Request, res : Response) {
@@ -115,6 +145,31 @@ class UserController {
         } else {
             res.status(404)
             res.json({err: "Id não especificado!"})
+        }
+    }
+
+    async deleteuser(req: Request, res: Response) {
+        const id = req.params.id;
+
+        if (id != null){
+            try{
+                const user : any =  await UserModel.findById(id);
+
+                if (user != null) {
+                    await UserModel.findByIdAndDelete(id);
+
+                    res.status(200);
+                    res.json({msg: "Usuário deletado com sucesso"})
+                } else {
+                    res.status(404);
+                    res.json({err: "Não há um usuário com esse id!"});
+                }
+            }catch (err){
+                res.json({err: err.message});
+            }
+        } else {
+            res.status(400);
+            res.json({err: "Id não informado!"});
         }
     }
 }
